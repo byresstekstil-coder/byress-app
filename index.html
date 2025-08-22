@@ -3,12 +3,12 @@
 <head>
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1" />
-<title>BYRESS • Ana Ekran (v3)</title>
+<title>BYRESS • Ana Ekran (v4)</title>
 <link rel="manifest" href="/manifest.json" />
 <meta name="theme-color" content="#113f32" />
 <meta name="apple-mobile-web-app-capable" content="yes" />
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
-<link rel="apple-touch-icon" href="/icons/icon-192.png" />
+<link rel="apple-touch-icon" href="/icon-192.png" />
 <style>
   :root{--bg:#f7faf9;--card:#ffffff;--txt:#0f172a;--muted:#6b7280;--brand:#113f32;--line:#e5e7eb;}
   *{box-sizing:border-box} body{margin:0;background:var(--bg);color:var(--txt);font-family:system-ui,-apple-system,Segoe UI,Roboto,Ubuntu,"Helvetica Neue",Arial}
@@ -31,16 +31,17 @@
   .footer{position:fixed;bottom:0;left:0;right:0;background:#fff;border-top:1px solid var(--line)}
   .footwrap{max-width:760px;margin:0 auto;padding:8px 16px;font-size:12px;color:var(--muted);text-align:center}
   .flex{display:flex;gap:10px;align-items:center}
-  .pin{position:fixed;inset:0;background:rgba(0,0,0,.6);display:none;align-items:center;justify-content:center;padding:16px}
+  .pin{position:fixed;inset:0;background:rgba(0,0,0,.6);display:flex;align-items:center;justify-content:center;padding:16px}
   .pin .box{background:#fff;border-radius:16px;padding:18px;max-width:360px;width:100%;border:1px solid var(--line)}
   .center{text-align:center}
+  .tip{font-size:12px;color:#475569;margin-top:8px}
 </style>
 </head>
 <body>
 <header>
   <div class="wrap brand">
     <div class="logo">B</div>
-    <div><h1>BYRESS TEKSTİL</h1><div class="sub">Ana Ekran • Hızlı Kayıt <span class="muted">(v3)</span></div></div>
+    <div><h1>BYRESS TEKSTİL</h1><div class="sub">Ana Ekran • Hızlı Kayıt <span class="muted">(v4)</span></div></div>
   </div>
 </header>
 
@@ -78,7 +79,8 @@
   <!-- Quick Form -->
   <div class="card" style="margin-top:10px">
     <div class="title" style="margin-bottom:8px">Hızlı Kayıt</div>
-    <div class="row">
+    <div class="tip">Satış için <b>Satılan Adet</b> ve <b>Satış Fiyatı</b> gir. Gider'in doğru çıkması için <b>Alış Fiyatı</b> da gir (stok maliyeti).</div>
+    <div class="row" style="margin-top:8px">
       <div><div class="muted">Tarih</div><input id="fDate" type="date"></div>
       <div><div class="muted">Tür</div>
         <select id="fType">
@@ -127,9 +129,10 @@
 </div>
 
 <footer class="footer">
-  <div class="footwrap">BYRESS • Veriler cihazınızda saklanır • Ana ekrana ekleyerek uygulama gibi kullanın • v3</div>
+  <div class="footwrap">BYRESS • Veriler cihazınızda saklanır • Ana ekrana ekleyerek uygulama gibi kullanın • v4</div>
 </footer>
 
+<!-- PIN modal -->
 <div class="pin" id="pinModal">
   <div class="box">
     <div class="title center">Giriş Şifresi</div>
@@ -171,7 +174,7 @@ function clearAll(){
 function addRecord(){
   const r = {
     id: uid(),
-    tarih: fDate.value || todayISO(),
+    tarih: (fDate.value||todayISO()).slice(0,10),
     tur: fType.value,
     urunAdi: fName.value,
     sku: fSKU.value,
@@ -222,9 +225,10 @@ function summarize(period){
   const mKey = monthKey(today);
   let gelir=0,gider=0;
   rows.forEach(r=>{
-    if(period==='day' && r.tarih!==today) return;
-    if(period==='week' && !(r.tarih>=wStart && r.tarih<=today)) return;
-    if(period==='month' && monthKey(r.tarih)!==mKey) return;
+    const t = (r.tarih||'').slice(0,10);
+    if(period==='day' && t!==today) return;
+    if(period==='week' && !(t>=wStart && t<=today)) return;
+    if(period==='month' && monthKey(t)!==mKey) return;
     if(r.tur==='Ödeme'){
       gider += +(r.odemeTutar||0);
     }else{
@@ -278,10 +282,11 @@ function exportCSV(){
   const csv = "\ufeff" + [headers.join(";"), ...lines].join("\n");
   const blob = new Blob([csv], {type:"text/csv;charset=utf-8;"});
   const url = URL.createObjectURL(blob);
-  const a = document.createElement('a'); a.href=url; a.download="byress_kayit_v3.csv"; a.click();
+  const a = document.createElement('a'); a.href=url; a.download="byress_kayit_v4.csv"; a.click();
   URL.revokeObjectURL(url);
 }
 
+// PIN always asked
 function showPIN(){ pinModal.style.display='flex'; pinInput.focus(); }
 function hidePIN(){ pinModal.style.display='none'; }
 function confirmPIN(){
@@ -300,6 +305,7 @@ function resetPIN(){
   if(confirm('PIN sıfırlansın mı? (Sadece bu cihaz)')){
     localStorage.removeItem(LS_PIN);
     alert('PIN sıfırlandı. Yeni PIN belirleyin.');
+    showPIN();
   }
 }
 
@@ -311,7 +317,7 @@ if ('serviceWorker' in navigator) {
   window.addEventListener('load', () => navigator.serviceWorker.register('/service-worker.js'));
 }
 
-(function(){ const p = localStorage.getItem(LS_PIN); if(p!==null){ showPIN(); } })();
+showPIN();
 </script>
 </body>
 </html>
