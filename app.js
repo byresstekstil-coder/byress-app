@@ -265,8 +265,8 @@ function renderReport(){
 
 // Settings
 function saveSettings(){ const s=getSettings(); s.webhook=$("#sWebhook").value.trim(); s.autoSync=$("#sAuto").value==="1"; s.low=+$("#sLow").value||3; setSettings(s); alert("Kaydedildi"); }
-function savePIN(){ const v=$("#sPin").value.trim(); if(v.length<4){ alert("PIN en az 4 hane"); return;} localStorage.setItem(LS_PIN,btoa(v)); alert("PIN güncellendi"); $("#sPin").value=""; }
-function resetPIN(){ localStorage.removeItem(LS_PIN); alert("PIN sıfırlandı. Açılışta yeni PIN belirle."); showPIN(); }
+function savePIN(){ alert('PIN kapalı'); }
+function resetPIN(){ /* disabled */ }
 
 function backupJSON(){ const data={records:load(),settings:getSettings()}; const url=URL.createObjectURL(new Blob([JSON.stringify(data)],{type:"application/json"})); const a=document.createElement("a"); a.href=url; a.download="byress_backup.json"; a.click(); URL.revokeObjectURL(url); }
 function restoreJSON(){ const inp=document.createElement("input"); inp.type="file"; inp.accept="application/json"; inp.onchange=()=>{ const f=inp.files[0]; const fr=new FileReader(); fr.onload=()=>{ try{const data=JSON.parse(fr.result); if(data.records) save(data.records); if(data.settings) setSettings(data.settings); ensureDefaults(); renderAll(); alert("Yükleme tamam");}catch(e){alert("Geçersiz dosya");}}; fr.readAsText(f); }; inp.click(); }
@@ -275,21 +275,10 @@ function restoreJSON(){ const inp=document.createElement("input"); inp.type="fil
 document.querySelectorAll(".tab").forEach(btn=>btn.addEventListener("click",()=>{ document.querySelectorAll(".tab").forEach(b=>b.classList.remove("active")); btn.classList.add("active"); const v=btn.getAttribute("data-tab"); document.querySelectorAll(".tabpane").forEach(p=>p.style.display="none"); $("#"+v).style.display="block"; if(v==="stock") renderStock(); if(v==="report") renderReport(); if(v==="search") renderSearch(); if(v==="home") renderHomeSummary(); }));
 
 // PIN
-function showPIN(){ $("#pinModal").style.display="flex"; setTimeout(()=>$("#pinInput").focus(),10); }
-function hidePIN(){ $("#pinModal").style.display="none"; }
+function showPIN(){ /* disabled */ }
+function hidePIN(){ /* disabled */ }
 
-function confirmPIN(){
-  try{
-    const stored = localStorage.getItem(LS_PIN);
-    const val = ($("#pinInput").value || "").trim();
-    if(!stored){
-      // İlk kurulum: alan boşsa 0000 ata
-      const setTo = val && val.length>=4 ? val : "0000";
-      localStorage.setItem(LS_PIN, btoa(setTo));
-      hidePIN();
-      setTimeout(()=>{ try{$("#pinInput").value="";}catch(e){} }, 50);
-    }else{
-      if(val.length===0){ alert("PIN girin"); return; }
+function confirmPIN(){ /* disabled */ }
       if(btoa(val)===stored){
         hidePIN();
       }else{
