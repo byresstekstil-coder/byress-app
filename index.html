@@ -1,0 +1,267 @@
+<!doctype html>
+<html lang="tr">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1" />
+<title>BYRESS • Ana Ekran (v2)</title>
+<link rel="manifest" href="/manifest.json" />
+<meta name="theme-color" content="#113f32" />
+<meta name="apple-mobile-web-app-capable" content="yes" />
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+<link rel="apple-touch-icon" href="/icons/icon-192.png" />
+<style>
+  :root{--bg:#f7faf9;--card:#ffffff;--txt:#0f172a;--muted:#6b7280;--brand:#113f32;--line:#e5e7eb;}
+  *{box-sizing:border-box} body{margin:0;background:var(--bg);color:var(--txt);font-family:system-ui,-apple-system,Segoe UI,Roboto,Ubuntu,"Helvetica Neue",Arial}
+  header{position:sticky;top:0;background:#fff8;border-bottom:1px solid var(--line);backdrop-filter:saturate(1.2) blur(8px);z-index:10}
+  .wrap{max-width:720px;margin:0 auto;padding:12px 16px}
+  .brand{display:flex;align-items:center;gap:10px}
+  .logo{width:36px;height:36px;border-radius:12px;background:var(--brand);color:#fff;display:grid;place-items:center;font-weight:700}
+  h1{font-size:16px;margin:0} .sub{font-size:12px;color:var(--muted);margin-top:-2px}
+  .grid{display:grid;gap:10px} .g2{grid-template-columns:1fr 1fr} .g3{grid-template-columns:1fr 1fr 1fr}
+  .card{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:14px}
+  .muted{color:var(--muted)} .title{font-weight:600}
+  input,select,textarea,button{font:inherit} input,select,textarea{width:100%;padding:10px;border:1px solid var(--line);border-radius:12px;background:#fff}
+  button{padding:10px 12px;border:1px solid var(--line);border-radius:12px;background:#fff;cursor:pointer}
+  .primary{background:var(--brand);color:#fff;border-color:var(--brand)}
+  .row{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+  .actions{display:flex;gap:10px;flex-wrap:wrap}
+  .list{display:flex;flex-direction:column;gap:8px;margin-top:8px}
+  .item{padding:10px;border:1px solid var(--line);border-radius:12px;background:#fff}
+  .right{float:right}
+  .badge{font-size:12px;background:#eef2ff;border:1px solid #c7d2fe;color:#3730a3;padding:3px 8px;border-radius:999px}
+  .footer{position:fixed;bottom:0;left:0;right:0;background:#fff;border-top:1px solid var(--line)}
+  .footwrap{max-width:720px;margin:0 auto;padding:8px 16px;font-size:12px;color:var(--muted);text-align:center}
+</style>
+</head>
+<body>
+<header>
+  <div class="wrap brand">
+    <div class="logo">B</div>
+    <div><h1>BYRESS TEKSTİL</h1><div class="sub">Ana Ekran • Hızlı Kayıt <span class="muted">(v2)</span></div></div>
+  </div>
+</header>
+
+<div class="wrap" style="padding-bottom:84px">
+  <!-- Dashboard -->
+  <div class="grid g2">
+    <div class="card">
+      <div class="muted">Bugün Gelir</div>
+      <div class="title" id="todayRevenue">₺0,00</div>
+      <div class="muted">Kâr: <span id="todayProfit">₺0,00</span></div>
+    </div>
+    <div class="card">
+      <div class="muted">Bu Ay Gelir</div>
+      <div class="title" id="monthRevenue">₺0,00</div>
+      <div class="muted">Kâr: <span id="monthProfit">₺0,00</span></div>
+    </div>
+  </div>
+
+  <!-- Quick Form -->
+  <div class="card" style="margin-top:10px">
+    <div class="title" style="margin-bottom:8px">Hızlı Kayıt</div>
+    <div class="row">
+      <div><div class="muted">Tarih</div><input id="fDate" type="date"></div>
+      <div><div class="muted">Tür</div>
+        <select id="fType">
+          <option>Satış</option><option>Alış</option><option>İade</option><option>Ödeme</option>
+        </select>
+      </div>
+    </div>
+    <div class="row" style="margin-top:8px">
+      <div><div class="muted">Ürün Adı</div><input id="fName" placeholder="Örn: Tişört"></div>
+      <div><div class="muted">SKU / Barkod</div><input id="fSKU" placeholder="Örn: TS-001"></div>
+    </div>
+    <div class="row" style="margin-top:8px">
+      <div><div class="muted">Kategori</div><input id="fCat" placeholder="Örn: Tişört"></div>
+      <div><div class="muted">Ödeme Yöntemi</div>
+        <select id="fPay"><option>Nakit</option><option>POS</option><option>Veresiye</option><option>Transfer</option></select>
+      </div>
+    </div>
+    <div class="row" style="margin-top:8px">
+      <div><div class="muted">Gelen Adet</div><input id="fIn" type="number" value="0"></div>
+      <div><div class="muted">Satılan Adet</div><input id="fOut" type="number" value="0"></div>
+    </div>
+    <div class="row" style="margin-top:8px">
+      <div><div class="muted">İade Adet</div><input id="fReturn" type="number" value="0"></div>
+      <div><div class="muted">KDV %</div><input id="fKDV" type="number" step="0.1" value="20"></div>
+    </div>
+    <div class="row" style="margin-top:8px">
+      <div><div class="muted">Alış Fiyatı (TL)</div><input id="fBuy" type="number" step="0.01" value="0"></div>
+      <div><div class="muted">Satış Fiyatı (TL)</div><input id="fSell" type="number" step="0.01" value="0"></div>
+    </div>
+    <div class="row" style="margin-top:8px">
+      <div><div class="muted">Müşteri / Tedarikçi</div><input id="fParty" placeholder="Ayşe / Trend"></div>
+      <div><div class="muted">İskonto %</div><input id="fDisc" type="number" step="0.1" value="0"></div>
+    </div>
+    <div class="row" style="margin-top:8px">
+      <div><div class="muted">Ödeme Kategorisi</div><input id="fExpCat" placeholder="Kira/Elektrik/Maaş"></div>
+      <div><div class="muted">Ödeme Tutarı (TL)</div><input id="fExpAmt" type="number" step="0.01" value="0"></div>
+    </div>
+    <div style="margin-top:8px"><div class="muted">Açıklama</div><textarea id="fNote" rows="2"></textarea></div>
+
+    <div class="actions" style="margin-top:10px">
+      <button class="primary" onclick="addRecord()">Kaydı Ekle</button>
+      <button onclick="clearForm()">Temizle</button>
+      <button onclick="exportCSV()">CSV İndir</button>
+      <button onclick="clearAll()" title="Tüm kayıtları cihazdan siler">Verileri Temizle</button>
+    </div>
+  </div>
+
+  <!-- Search -->
+  <div class="card" style="margin-top:10px">
+    <div class="row">
+      <div><div class="title">Arama</div></div>
+      <div><input id="q" placeholder="Ürün adı / SKU"></div>
+    </div>
+    <div class="list" id="list"></div>
+  </div>
+</div>
+
+<footer class="footer">
+  <div class="footwrap">BYRESS • Veriler cihazınızda saklanır • Ana ekrana ekleyerek uygulama gibi kullanın</div>
+</footer>
+
+<script>
+const LS_KEY = "byress_records_v1";
+
+function fmt(n){ return (n||0).toLocaleString('tr-TR', {style:'currency', currency:'TRY', maximumFractionDigits:2}); }
+function todayISO(){ return new Date().toISOString().slice(0,10); }
+function monthKey(d){ return (d||'').slice(0,7); }
+function uid(){ return Math.random().toString(36).slice(2)+Date.now().toString(36); }
+
+function load(){ try{ return JSON.parse(localStorage.getItem(LS_KEY)||'[]'); }catch(e){ return []; } }
+function save(rows){ localStorage.setItem(LS_KEY, JSON.stringify(rows)); }
+
+function clearForm(){
+  document.getElementById('fName').value='';
+  document.getElementById('fSKU').value='';
+  document.getElementById('fCat').value='';
+  document.getElementById('fIn').value=0;
+  document.getElementById('fOut').value=0;
+  document.getElementById('fReturn').value=0;
+  document.getElementById('fBuy').value=0;
+  document.getElementById('fSell').value=0;
+  document.getElementById('fDisc').value=0;
+  document.getElementById('fParty').value='';
+  document.getElementById('fExpCat').value='';
+  document.getElementById('fExpAmt').value=0;
+  document.getElementById('fNote').value='';
+  document.getElementById('fDate').value=todayISO();
+  document.getElementById('fType').value='Satış';
+  document.getElementById('fPay').value='Nakit';
+  document.getElementById('fKDV').value=20;
+}
+
+function clearAll(){
+  if(confirm('Tüm kayıtları silmek istediğine emin misin?')){
+    localStorage.removeItem(LS_KEY);
+    render();
+    clearForm();
+  }
+}
+
+function addRecord(){
+  const r = {
+    id: uid(),
+    tarih: document.getElementById('fDate').value || todayISO(),
+    tur: document.getElementById('fType').value,
+    urunAdi: document.getElementById('fName').value,
+    sku: document.getElementById('fSKU').value,
+    kategori: document.getElementById('fCat').value,
+    gelenAdet: +document.getElementById('fIn').value||0,
+    satilanAdet: +document.getElementById('fOut').value||0,
+    iadeAdet: +document.getElementById('fReturn').value||0,
+    alisFiyati: +document.getElementById('fBuy').value||0,
+    satisFiyati: +document.getElementById('fSell').value||0,
+    iskontoPct: +document.getElementById('fDisc').value||0,
+    kdvPct: +document.getElementById('fKDV').value||0,
+    odemeYontemi: document.getElementById('fPay').value,
+    taraf: document.getElementById('fParty').value,
+    aciklama: document.getElementById('fNote').value,
+    odemeKategori: document.getElementById('fExpCat').value,
+    odemeTutar: +document.getElementById('fExpAmt').value||0
+  };
+  const rows = load();
+  rows.unshift(r);
+  save(rows);
+  render();
+  clearForm();
+}
+
+function hesapla(r){
+  const satilan = +(r.satilanAdet||0);
+  const iade = +(r.iadeAdet||0);
+  const net = Math.max(satilan - iade, 0);
+  const alis = +(r.alisFiyati||0);
+  const satis = +(r.satisFiyati||0);
+  const isk = +(r.iskontoPct||0);
+  const kdv = +(r.kdvPct||0);
+  const brut = net * satis;
+  const iskTutar = brut * (isk/100);
+  const gelirEx = brut - iskTutar;
+  const maliyetEx = net * alis;
+  const karEx = gelirEx - maliyetEx;
+  const gelirInc = net * (satis*(1+kdv/100)) - (iskTutar*(1+kdv/100));
+  const maliyetInc = net * (alis*(1+kdv/100));
+  const karInc = gelirInc - maliyetInc;
+  return {net, gelirEx, maliyetEx, karEx, gelirInc, maliyetInc, karInc};
+}
+
+function render(){
+  // dashboard
+  const rows = load();
+  const t = todayISO();
+  const m = monthKey(t);
+  let tGelir=0, tKar=0, mGelir=0, mKar=0;
+  rows.forEach(r=>{
+    const h = hesapla(r);
+    if ((r.tarih||'')===t){ tGelir+=h.gelirEx; tKar+=h.karEx; }
+    if (monthKey(r.tarih||'')===m){ mGelir+=h.gelirEx; mKar+=h.karEx; }
+  });
+  document.getElementById('todayRevenue').textContent = fmt(tGelir);
+  document.getElementById('todayProfit').textContent = fmt(tKar);
+  document.getElementById('monthRevenue').textContent = fmt(mGelir);
+  document.getElementById('monthProfit').textContent = fmt(mKar);
+
+  // search list
+  const q = (document.getElementById('q').value||'').toLowerCase().trim();
+  const list = document.getElementById('list');
+  list.innerHTML='';
+  rows.filter(r => !q || (r.urunAdi||'').toLowerCase().includes(q) || (r.sku||'').toLowerCase().includes(q))
+      .slice(0,200)
+      .forEach(r=>{
+        const h = hesapla(r);
+        const div = document.createElement('div');
+        div.className='item';
+        div.innerHTML = `<div><strong>${r.urunAdi||'-'}</strong> <span class="muted">(${r.sku||'-'})</span>
+          <span class="badge right">${fmt(h.karEx)} kâr</span></div>
+          <div class="muted" style="margin-top:4px">${r.tarih} • ${r.tur} • ${r.kategori||'-'} • ${r.odemeYontemi||'-'}</div>`;
+        list.appendChild(div);
+      });
+}
+
+function exportCSV(){
+  const rows = load();
+  const headers = ["id","tarih","tur","urunAdi","sku","kategori","gelenAdet","satilanAdet","iadeAdet","alisFiyati","satisFiyati","iskontoPct","kdvPct","odemeYontemi","taraf","aciklama","odemeKategori","odemeTutar","netSatilan","gelirEx","maliyetEx","karEx","gelirInc","maliyetInc","karInc"];
+  const lines = rows.map(r=>{
+    const h = hesapla(r);
+    return [r.id,r.tarih,r.tur,r.urunAdi||"",r.sku||"",r.kategori||"",r.gelenAdet||0,r.satilanAdet||0,r.iadeAdet||0,r.alisFiyati||0,r.satisFiyati||0,r.iskontoPct||0,r.kdvPct||0,r.odemeYontemi||"",r.taraf||"",r.aciklama||"",r.odemeKategori||"",r.odemeTutar||0,h.net,h.gelirEx,h.maliyetEx,h.karEx,h.gelirInc,h.maliyetInc,h.karInc].join(",");
+  });
+  const csv = [headers.join(","), ...lines].join("\n");
+  const blob = new Blob([csv], {type:"text/csv;charset=utf-8;"});
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a'); a.href=url; a.download="byress_kayit.csv"; a.click();
+  URL.revokeObjectURL(url);
+}
+
+document.getElementById('fDate').value = todayISO();
+document.getElementById('q').addEventListener('input', render);
+render();
+
+// Register SW
+if ('serviceWorker' in navigator) {
+  window.addEventListener('load', () => navigator.serviceWorker.register('/service-worker.js'));
+}
+</script>
+</body>
+</html>
