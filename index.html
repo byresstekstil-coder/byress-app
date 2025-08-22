@@ -1,63 +1,199 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="tr">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>BYRESS Lite v5</title>
-  <link rel="manifest" href="manifest.json">
-  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css">
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>BYRESS Pro v2</title>
+<link rel="manifest" href="/manifest.json" />
+<meta name="theme-color" content="#0f3b2e" />
+<link rel="apple-touch-icon" href="/icon-192.png" />
+<link rel="stylesheet" href="/style.css" />
+<script defer src="https://cdn.jsdelivr.net/npm/@zxing/browser@latest"></script>
 </head>
-<body class="bg-light">
+<body>
+<header>
+  <div class="wrap brand">
+    <img src="/logo.png" class="logo-img" alt="BYRESS Logo"/>
+    <div><h1>BYRESS TEKSTİL</h1><div class="sub">Pro v2 • Hızlı Kayıt • Stok • Rapor</div></div>
+  </div>
+  <div class="wrap nav">
+    <button class="tab active" data-tab="home">Ana</button>
+    <button class="tab" data-tab="search">Arama</button>
+    <button class="tab" data-tab="stock">Stok</button>
+    <button class="tab" data-tab="report">Raporlar</button>
+    <button class="tab" data-tab="settings">Ayarlar</button>
+  </div>
+</header>
 
-<div class="container py-3">
+<main class="wrap" style="padding-bottom:140px">
+  <!-- ANA -->
+  <section id="home" class="tabpane">
+    <div class="card">
+      <div class="grid2">
+        <div><label>Tarih</label><input id="fDate" type="date"></div>
+        <div><label>Tür</label>
+          <select id="fType"><option>Satış</option><option>Alış</option><option>İade</option><option>Ödeme</option></select>
+        </div>
+      </div>
+      <div class="grid2">
+        <div><label>Ürün Adı</label><input id="fName" placeholder="Örn: Tişört"></div>
+        <div><label>SKU / Barkod</label>
+          <div class="actions" style="gap:6px">
+            <input id="fSKU" placeholder="Örn: TS-001" style="flex:1">
+            <button id="scanBtn">Barkod</button>
+          </div>
+        </div>
+      </div>
+      <div class="grid2">
+        <div><label>Kategori</label>
+          <input id="fCat" list="dlCat" placeholder="Örn: Tişört">
+          <datalist id="dlCat"></datalist>
+        </div>
+        <div><label>Ödeme Yöntemi</label>
+          <input id="fPay" list="dlPay" placeholder="Nakit / POS / ...">
+          <datalist id="dlPay"></datalist>
+        </div>
+      </div>
+      <div class="grid2">
+        <div><label>Gelen Adet</label><input id="fIn" type="number" value="0"></div>
+        <div><label>Satılan Adet</label><input id="fOut" type="number" value="0"></div>
+      </div>
+      <div class="grid2">
+        <div><label>İade Adet</label><input id="fReturn" type="number" value="0"></div>
+        <div><label>KDV %</label><input id="fKDV" type="number" step="0.1" value="20"></div>
+      </div>
+      <div class="grid2">
+        <div><label>Alış Fiyatı (TL)</label><input id="fBuy" type="number" step="0.01" value="0"></div>
+        <div><label>Satış Fiyatı (TL)</label><input id="fSell" type="number" step="0.01" value="0"></div>
+      </div>
+      <div class="grid2">
+        <div><label>Müşteri / Tedarikçi</label>
+          <input id="fParty" list="dlParty" placeholder="Ayşe / Trend">
+          <datalist id="dlParty"></datalist>
+        </div>
+        <div><label>İskonto %</label><input id="fDisc" type="number" step="0.1" value="0"></div>
+      </div>
+      <div class="grid2">
+        <div><label>Ödeme Kategorisi</label>
+          <input id="fExpCat" list="dlExpCat" placeholder="Kira / Elektrik / ...">
+          <datalist id="dlExpCat"></datalist>
+        </div>
+        <div><label>Ödeme Tutarı (TL)</label><input id="fExpAmt" type="number" step="0.01" value="0"></div>
+      </div>
+      <div class="row"><label>Açıklama</label><textarea id="fNote" rows="2" placeholder="Not..."></textarea></div>
 
-  <h3 class="text-center mb-3">BYRESS TEKSTİL</h3>
+      <div class="small">Alanlardaki listeler **otomatik dolar**. Sen yeni bir şey yazarsan **listeye eklenir**.</div>
 
-  <!-- Hızlı Kayıt -->
-  <div class="card mb-3">
-    <div class="card-header">Hızlı Kayıt</div>
-    <div class="card-body">
-      <form id="recordForm" class="row g-2">
-        <input type="date" id="tarih" class="form-control" required>
-        <input type="text" id="urun" class="form-control" placeholder="Ürün Adı">
-        <input type="text" id="sku" class="form-control" placeholder="SKU / Barkod">
-        <input type="text" id="kategori" class="form-control" placeholder="Kategori">
-        <input type="number" id="alis" class="form-control" placeholder="Alış Fiyatı (TL)">
-        <input type="number" id="satis" class="form-control" placeholder="Satış Fiyatı (TL)">
-        <input type="number" id="adet" class="form-control" placeholder="Satılan Adet">
-        <input type="number" id="odeme" class="form-control" placeholder="Ödeme Tutarı (TL)">
-        <input type="text" id="odemeKat" class="form-control" placeholder="Ödeme Kategorisi (örn. Kira)">
-        <button type="submit" class="btn btn-success w-100">Kaydı Ekle</button>
-      </form>
+      <div class="actions" style="margin-top:8px">
+        <button class="primary" id="addBtn">Kaydı Ekle</button>
+        <button id="csvBtn">CSV</button>
+        <button id="importBtn">CSV İçeri Al</button>
+      </div>
     </div>
-  </div>
 
-  <!-- Arama -->
-  <div class="card mb-3">
-    <div class="card-header">Ürün Arama</div>
-    <div class="card-body">
-      <input type="text" id="arama" class="form-control" placeholder="Ürün adı veya SKU ile ara...">
-      <ul id="aramaSonuc" class="list-group mt-2"></ul>
+    <!-- Haftalık & Aylık Özet -->
+    <div class="card">
+      <div class="grid2">
+        <div><div class="small">Bu Hafta</div><div id="weekLine" class="small">Gelir • Gider • Kâr</div></div>
+        <div><div class="small">Bu Ay</div><div id="monthLine" class="small">Gelir • Gider • Kâr</div></div>
+      </div>
     </div>
-  </div>
+  </section>
 
-  <!-- CSV -->
-  <div class="d-grid mb-3">
-    <button id="csvBtn" class="btn btn-secondary">CSV İndir</button>
-  </div>
-
-  <!-- Haftalık ve Aylık Özet -->
-  <div class="card">
-    <div class="card-header">Özet</div>
-    <div class="card-body">
-      <p><b>Bu Hafta:</b> Gelir: <span id="haftaGelir">0</span>₺, Gider: <span id="haftaGider">0</span>₺, Kâr: <span id="haftaKar">0</span>₺</p>
-      <p><b>Bu Ay:</b> Gelir: <span id="ayGelir">0</span>₺, Gider: <span id="ayGider">0</span>₺, Kâr: <span id="ayKar">0</span>₺</p>
-      <p><b>En Çok Gider:</b> <span id="enCokGider">-</span></p>
+  <!-- ARAMA -->
+  <section id="search" class="tabpane" style="display:none">
+    <div class="card">
+      <label>Ürün adı / SKU ara</label><input id="q" placeholder="Ara...">
     </div>
-  </div>
+    <div class="card"><div class="list" id="list"></div></div>
+  </section>
 
+  <!-- STOK -->
+  <section id="stock" class="tabpane" style="display:none">
+    <div class="card">
+      <div class="actions"><input id="stockQ" placeholder="Ürün/SKU ara" style="flex:1"><button onclick="renderStock()">Yenile</button></div>
+      <table class="table" id="stockTable">
+        <thead><tr><th>Ürün</th><th>SKU</th><th class="right">Stok</th><th class="right">Ort. Maliyet</th><th class="right">Son Satış</th></tr></thead>
+        <tbody></tbody>
+      </table>
+      <div id="lowStockMsg" class="small"></div>
+    </div>
+  </section>
+
+  <!-- RAPORLAR -->
+  <section id="report" class="tabpane" style="display:none">
+    <div class="card">
+      <div class="grid3">
+        <div><label>Başlangıç</label><input type="date" id="rFrom"></div>
+        <div><label>Bitiş</label><input type="date" id="rTo"></div>
+        <div><label>Filtre</label>
+          <select id="rType"><option value="">Hepsi</option><option>Satış</option><option>Alış</option><option>İade</option><option>Ödeme</option></select>
+        </div>
+      </div>
+      <div class="actions" style="margin-top:8px">
+        <button onclick="renderReport()">Uygula</button>
+        <button onclick="downloadCSV()">CSV İndir</button>
+      </div>
+    </div>
+    <div class="card"><canvas id="chartIncome" class="chart"></canvas></div>
+    <div class="card">
+      <div class="grid2">
+        <div><div class="small">Top 5 Gider Kategorisi</div><table class="table" id="topExp"><thead><tr><th>Kategori</th><th class="right">Tutar</th></tr></thead><tbody></tbody></table></div>
+        <div><div class="small">Top 5 Ürün (Kâr)</div><table class="table" id="topProd"><thead><tr><th>Ürün</th><th class="right">Kâr</th></tr></thead><tbody></tbody></table></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- AYARLAR -->
+  <section id="settings" class="tabpane" style="display:none">
+    <div class="card">
+      <div class="grid2">
+        <div><label>Google Sheets Webhook</label><input id="sWebhook" placeholder="https://script.google.com/.../exec"></div>
+        <div><label>Oto Senkron</label><select id="sAuto"><option value="0">Kapalı</option><option value="1">Açık</option></select></div>
+      </div>
+      <div class="grid2">
+        <div><label>Düşük Stok Eşiği</label><input id="sLow" type="number" value="3"></div>
+        <div><label>PIN</label><div class="actions" style="gap:6px"><input id="sPin" type="password" placeholder="Yeni PIN"><button onclick="savePIN()">Kaydet</button><button onclick="resetPIN()">Sıfırla</button></div></div>
+      </div>
+    </div>
+
+    <div class="card">
+      <b>Hızlı Seçenekler</b>
+      <div class="grid3">
+        <div>
+          <div class="small" style="margin-top:8px">Ürün Kategorileri</div>
+          <div id="chipsCat" class="chips"></div>
+        </div>
+        <div>
+          <div class="small" style="margin-top:8px">Gider Kategorileri</div>
+          <div id="chipsExp" class="chips"></div>
+        </div>
+        <div>
+          <div class="small" style="margin-top:8px">Ödeme Yöntemleri</div>
+          <div id="chipsPay" class="chips"></div>
+        </div>
+      </div>
+      <div class="small" style="margin-top:8px">Bir alanı doldurup **Enter** yaptığında, listede yoksa otomatik eklenir. Buradan da silebilirsin.</div>
+    </div>
+
+    <div class="card">
+      <button onclick="backupJSON()">Yedekle (JSON)</button>
+      <button onclick="restoreJSON()">Yedeği Yükle</button>
+    </div>
+  </section>
+</main>
+
+<footer class="footer"><div class="footwrap">BYRESS • Cihazınızda saklanır • Pro v2</div></footer>
+
+<!-- PIN modal -->
+<div class="pin" id="pinModal">
+  <div class="box">
+    <div style="text-align:center"><img src="/logo.png" style="height:46px"><div class="small">Giriş Şifresi</div></div>
+    <input id="pinInput" type="password" inputmode="numeric" placeholder="****" style="width:100%;padding:12px;border:1px solid #e5e7eb;border-radius:12px;margin-top:8px">
+    <div class="actions" style="margin-top:8px"><button class="primary" onclick="confirmPIN()">Giriş</button><button onclick="resetPIN()">PIN Sıfırla</button></div>
+  </div>
 </div>
 
-<script src="app.js"></script>
+<script src="/app.js"></script>
 </body>
 </html>
