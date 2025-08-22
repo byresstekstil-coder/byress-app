@@ -1,323 +1,63 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="tr">
 <head>
-<meta charset="utf-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1" />
-<title>BYRESS • Ana Ekran (v4)</title>
-<link rel="manifest" href="/manifest.json" />
-<meta name="theme-color" content="#113f32" />
-<meta name="apple-mobile-web-app-capable" content="yes" />
-<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
-<link rel="apple-touch-icon" href="/icon-192.png" />
-<style>
-  :root{--bg:#f7faf9;--card:#ffffff;--txt:#0f172a;--muted:#6b7280;--brand:#113f32;--line:#e5e7eb;}
-  *{box-sizing:border-box} body{margin:0;background:var(--bg);color:var(--txt);font-family:system-ui,-apple-system,Segoe UI,Roboto,Ubuntu,"Helvetica Neue",Arial}
-  header{position:sticky;top:0;background:#fff8;border-bottom:1px solid var(--line);backdrop-filter:saturate(1.2) blur(8px);z-index:10}
-  .wrap{max-width:760px;margin:0 auto;padding:12px 16px}
-  .brand{display:flex;align-items:center;gap:10px}
-  .logo{width:36px;height:36px;border-radius:12px;background:var(--brand);color:#fff;display:grid;place-items:center;font-weight:700}
-  h1{font-size:16px;margin:0} .sub{font-size:12px;color:var(--muted);margin-top:-2px}
-  .grid{display:grid;gap:10px} .g3{grid-template-columns:1fr 1fr 1fr} .g2{grid-template-columns:1fr 1fr}
-  .card{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:14px}
-  .muted{color:var(--muted)} .title{font-weight:600}
-  input,select,textarea,button{font:inherit} input,select,textarea{width:100%;padding:10px;border:1px solid var(--line);border-radius:12px;background:#fff}
-  button{padding:10px 12px;border:1px solid var(--line);border-radius:12px;background:#fff;cursor:pointer}
-  .primary{background:var(--brand);color:#fff;border-color:var(--brand)}
-  .row{display:grid;grid-template-columns:1fr 1fr;gap:10px}
-  .actions{display:flex;gap:10px;flex-wrap:wrap}
-  .list{display:flex;flex-direction:column;gap:8px;margin-top:8px}
-  .item{padding:10px;border:1px solid var(--line);border-radius:12px;background:#fff}
-  .badge{font-size:12px;background:#eef2ff;border:1px solid #c7d2fe;color:#3730a3;padding:3px 8px;border-radius:999px}
-  .footer{position:fixed;bottom:0;left:0;right:0;background:#fff;border-top:1px solid var(--line)}
-  .footwrap{max-width:760px;margin:0 auto;padding:8px 16px;font-size:12px;color:var(--muted);text-align:center}
-  .flex{display:flex;gap:10px;align-items:center}
-  .pin{position:fixed;inset:0;background:rgba(0,0,0,.6);display:flex;align-items:center;justify-content:center;padding:16px}
-  .pin .box{background:#fff;border-radius:16px;padding:18px;max-width:360px;width:100%;border:1px solid var(--line)}
-  .center{text-align:center}
-  .tip{font-size:12px;color:#475569;margin-top:8px}
-</style>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>BYRESS Lite v5</title>
+  <link rel="manifest" href="manifest.json">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css">
 </head>
-<body>
-<header>
-  <div class="wrap brand">
-    <div class="logo">B</div>
-    <div><h1>BYRESS TEKSTİL</h1><div class="sub">Ana Ekran • Hızlı Kayıt <span class="muted">(v4)</span></div></div>
-  </div>
-</header>
+<body class="bg-light">
 
-<div class="wrap" style="padding-bottom:96px">
-  <!-- Üstte hızlı arama -->
+<div class="container py-3">
+
+  <h3 class="text-center mb-3">BYRESS TEKSTİL</h3>
+
+  <!-- Hızlı Kayıt -->
+  <div class="card mb-3">
+    <div class="card-header">Hızlı Kayıt</div>
+    <div class="card-body">
+      <form id="recordForm" class="row g-2">
+        <input type="date" id="tarih" class="form-control" required>
+        <input type="text" id="urun" class="form-control" placeholder="Ürün Adı">
+        <input type="text" id="sku" class="form-control" placeholder="SKU / Barkod">
+        <input type="text" id="kategori" class="form-control" placeholder="Kategori">
+        <input type="number" id="alis" class="form-control" placeholder="Alış Fiyatı (TL)">
+        <input type="number" id="satis" class="form-control" placeholder="Satış Fiyatı (TL)">
+        <input type="number" id="adet" class="form-control" placeholder="Satılan Adet">
+        <input type="number" id="odeme" class="form-control" placeholder="Ödeme Tutarı (TL)">
+        <input type="text" id="odemeKat" class="form-control" placeholder="Ödeme Kategorisi (örn. Kira)">
+        <button type="submit" class="btn btn-success w-100">Kaydı Ekle</button>
+      </form>
+    </div>
+  </div>
+
+  <!-- Arama -->
+  <div class="card mb-3">
+    <div class="card-header">Ürün Arama</div>
+    <div class="card-body">
+      <input type="text" id="arama" class="form-control" placeholder="Ürün adı veya SKU ile ara...">
+      <ul id="aramaSonuc" class="list-group mt-2"></ul>
+    </div>
+  </div>
+
+  <!-- CSV -->
+  <div class="d-grid mb-3">
+    <button id="csvBtn" class="btn btn-secondary">CSV İndir</button>
+  </div>
+
+  <!-- Haftalık ve Aylık Özet -->
   <div class="card">
-    <div class="flex">
-      <div class="title">Arama</div>
-      <input id="q" placeholder="Ürün adı / SKU" style="flex:1">
-      <button onclick="exportCSV()">CSV</button>
-      <button onclick="clearAll()">Temizle</button>
-    </div>
-    <div class="list" id="list"></div>
-  </div>
-
-  <!-- Dashboard -->
-  <div class="grid g3" style="margin-top:10px">
-    <div class="card">
-      <div class="muted">Bugün</div>
-      <div class="title" id="todaySum">Gelir: ₺0 • Gider: ₺0</div>
-      <div class="muted">Kâr: <span id="todayProfit">₺0</span></div>
-    </div>
-    <div class="card">
-      <div class="muted">Bu Hafta</div>
-      <div class="title" id="weekSum">Gelir: ₺0 • Gider: ₺0</div>
-      <div class="muted">Kâr: <span id="weekProfit">₺0</span></div>
-    </div>
-    <div class="card">
-      <div class="muted">Bu Ay</div>
-      <div class="title" id="monthSum">Gelir: ₺0 • Gider: ₺0</div>
-      <div class="muted">Kâr: <span id="monthProfit">₺0</span></div>
+    <div class="card-header">Özet</div>
+    <div class="card-body">
+      <p><b>Bu Hafta:</b> Gelir: <span id="haftaGelir">0</span>₺, Gider: <span id="haftaGider">0</span>₺, Kâr: <span id="haftaKar">0</span>₺</p>
+      <p><b>Bu Ay:</b> Gelir: <span id="ayGelir">0</span>₺, Gider: <span id="ayGider">0</span>₺, Kâr: <span id="ayKar">0</span>₺</p>
+      <p><b>En Çok Gider:</b> <span id="enCokGider">-</span></p>
     </div>
   </div>
 
-  <!-- Quick Form -->
-  <div class="card" style="margin-top:10px">
-    <div class="title" style="margin-bottom:8px">Hızlı Kayıt</div>
-    <div class="tip">Satış için <b>Satılan Adet</b> ve <b>Satış Fiyatı</b> gir. Gider'in doğru çıkması için <b>Alış Fiyatı</b> da gir (stok maliyeti).</div>
-    <div class="row" style="margin-top:8px">
-      <div><div class="muted">Tarih</div><input id="fDate" type="date"></div>
-      <div><div class="muted">Tür</div>
-        <select id="fType">
-          <option>Satış</option><option>Alış</option><option>İade</option><option>Ödeme</option>
-        </select>
-      </div>
-    </div>
-    <div class="row" style="margin-top:8px">
-      <div><div class="muted">Ürün Adı</div><input id="fName" placeholder="Örn: Tişört"></div>
-      <div><div class="muted">SKU / Barkod</div><input id="fSKU" placeholder="Örn: TS-001"></div>
-    </div>
-    <div class="row" style="margin-top:8px">
-      <div><div class="muted">Kategori</div><input id="fCat" placeholder="Örn: Tişört"></div>
-      <div><div class="muted">Ödeme Yöntemi</div>
-        <select id="fPay"><option>Nakit</option><option>POS</option><option>Veresiye</option><option>Transfer</option></select>
-      </div>
-    </div>
-    <div class="row" style="margin-top:8px">
-      <div><div class="muted">Gelen Adet</div><input id="fIn" type="number" value="0"></div>
-      <div><div class="muted">Satılan Adet</div><input id="fOut" type="number" value="0"></div>
-    </div>
-    <div class="row" style="margin-top:8px">
-      <div><div class="muted">İade Adet</div><input id="fReturn" type="number" value="0"></div>
-      <div><div class="muted">KDV %</div><input id="fKDV" type="number" step="0.1" value="20"></div>
-    </div>
-    <div class="row" style="margin-top:8px">
-      <div><div class="muted">Alış Fiyatı (TL)</div><input id="fBuy" type="number" step="0.01" value="0"></div>
-      <div><div class="muted">Satış Fiyatı (TL)</div><input id="fSell" type="number" step="0.01" value="0"></div>
-    </div>
-    <div class="row" style="margin-top:8px">
-      <div><div class="muted">Müşteri / Tedarikçi</div><input id="fParty" placeholder="Ayşe / Trend"></div>
-      <div><div class="muted">İskonto %</div><input id="fDisc" type="number" step="0.1" value="0"></div>
-    </div>
-    <div class="row" style="margin-top:8px">
-      <div><div class="muted">Ödeme Kategorisi</div><input id="fExpCat" placeholder="Kira/Elektrik/Maaş"></div>
-      <div><div class="muted">Ödeme Tutarı (TL)</div><input id="fExpAmt" type="number" step="0.01" value="0"></div>
-    </div>
-    <div style="margin-top:8px"><div class="muted">Açıklama</div><textarea id="fNote" rows="2"></textarea></div>
-
-    <div class="actions" style="margin-top:10px">
-      <button class="primary" onclick="addRecord()">Kaydı Ekle</button>
-      <button onclick="clearForm()">Temizle</button>
-      <button onclick="exportCSV()">CSV İndir</button>
-    </div>
-  </div>
 </div>
 
-<footer class="footer">
-  <div class="footwrap">BYRESS • Veriler cihazınızda saklanır • Ana ekrana ekleyerek uygulama gibi kullanın • v4</div>
-</footer>
-
-<!-- PIN modal -->
-<div class="pin" id="pinModal">
-  <div class="box">
-    <div class="title center">Giriş Şifresi</div>
-    <div class="muted center" style="margin-top:6px">İlk kez ayarlıyorsan 4-8 haneli PIN belirle</div>
-    <div style="margin-top:12px">
-      <div class="muted">PIN</div>
-      <input id="pinInput" type="password" inputmode="numeric" placeholder="****">
-    </div>
-    <div class="actions" style="margin-top:12px">
-      <button class="primary" onclick="confirmPIN()">Giriş</button>
-      <button onclick="resetPIN()">PIN Sıfırla</button>
-    </div>
-  </div>
-</div>
-
-<script>
-const LS_KEY = "byress_records_v1";
-const LS_PIN = "byress_pin_v1";
-
-function fmt(n){ return (n||0).toLocaleString('tr-TR', {style:'currency', currency:'TRY', maximumFractionDigits:2}); }
-function todayISO(){ return new Date().toISOString().slice(0,10); }
-function startOfWeek(d){ const x=new Date(d); const day=(x.getDay()+6)%7; x.setDate(x.getDate()-day); return x.toISOString().slice(0,10); }
-function monthKey(d){ return (d||'').slice(0,7); }
-function uid(){ return Math.random().toString(36).slice(2)+Date.now().toString(36); }
-
-function load(){ try{ return JSON.parse(localStorage.getItem(LS_KEY)||'[]'); }catch(e){ return []; } }
-function save(rows){ localStorage.setItem(LS_KEY, JSON.stringify(rows)); }
-
-function clearForm(){
-  fName.value=''; fSKU.value=''; fCat.value=''; fIn.value=0; fOut.value=0; fReturn.value=0;
-  fBuy.value=0; fSell.value=0; fDisc.value=0; fParty.value=''; fExpCat.value=''; fExpAmt.value=0; fNote.value='';
-  fDate.value=todayISO(); fType.value='Satış'; fPay.value='Nakit'; fKDV.value=20;
-}
-
-function clearAll(){
-  if(confirm('Tüm kayıtlar silinsin mi?')){ localStorage.removeItem(LS_KEY); render(); clearForm(); }
-}
-
-function addRecord(){
-  const r = {
-    id: uid(),
-    tarih: (fDate.value||todayISO()).slice(0,10),
-    tur: fType.value,
-    urunAdi: fName.value,
-    sku: fSKU.value,
-    kategori: fCat.value,
-    gelenAdet: +fIn.value||0,
-    satilanAdet: +fOut.value||0,
-    iadeAdet: +fReturn.value||0,
-    alisFiyati: +fBuy.value||0,
-    satisFiyati: +fSell.value||0,
-    iskontoPct: +fDisc.value||0,
-    kdvPct: +fKDV.value||0,
-    odemeYontemi: fPay.value,
-    taraf: fParty.value,
-    aciklama: fNote.value,
-    odemeKategori: fExpCat.value,
-    odemeTutar: +fExpAmt.value||0
-  };
-  const rows = load();
-  rows.unshift(r);
-  save(rows);
-  render();
-  clearForm();
-}
-
-function hesapla(r){
-  const satilan = +(r.satilanAdet||0);
-  const iade = +(r.iadeAdet||0);
-  const net = Math.max(satilan - iade, 0);
-  const alis = +(r.alisFiyati||0);
-  const satis = +(r.satisFiyati||0);
-  const isk = +(r.iskontoPct||0);
-  const kdv = +(r.kdvPct||0);
-  const brut = net * satis;
-  const iskTutar = brut * (isk/100);
-  const gelirEx = brut - iskTutar;
-  const maliyetEx = net * alis;
-  const karEx = gelirEx - maliyetEx;
-  const gelirInc = net * (satis*(1+kdv/100)) - (iskTutar*(1+kdv/100));
-  const maliyetInc = net * (alis*(1+kdv/100));
-  const karInc = gelirInc - maliyetInc;
-  return {net, gelirEx, maliyetEx, karEx, gelirInc, maliyetInc, karInc};
-}
-
-function summarize(period){
-  const rows = load();
-  const today = todayISO();
-  const wStart = startOfWeek(today);
-  const mKey = monthKey(today);
-  let gelir=0,gider=0;
-  rows.forEach(r=>{
-    const t = (r.tarih||'').slice(0,10);
-    if(period==='day' && t!==today) return;
-    if(period==='week' && !(t>=wStart && t<=today)) return;
-    if(period==='month' && monthKey(t)!==mKey) return;
-    if(r.tur==='Ödeme'){
-      gider += +(r.odemeTutar||0);
-    }else{
-      const h = hesapla(r);
-      gelir += h.gelirEx;
-      gider += h.maliyetEx;
-    }
-  });
-  return {gelir,gider,kar:gelir-gider};
-}
-
-function render(){
-  const d = summarize('day');
-  todaySum.textContent = `Gelir: ${fmt(d.gelir)} • Gider: ${fmt(d.gider)}`;
-  todayProfit.textContent = fmt(d.kar);
-  const w = summarize('week');
-  weekSum.textContent = `Gelir: ${fmt(w.gelir)} • Gider: ${fmt(w.gider)}`;
-  weekProfit.textContent = fmt(w.kar);
-  const m = summarize('month');
-  monthSum.textContent = `Gelir: ${fmt(m.gelir)} • Gider: ${fmt(m.gider)}`;
-  monthProfit.textContent = fmt(m.kar);
-
-  const rows = load();
-  const qv = (q.value||'').toLowerCase().trim();
-  list.innerHTML='';
-  rows.filter(r => !qv || (r.urunAdi||'').toLowerCase().includes(qv) || (r.sku||'').toLowerCase().includes(qv))
-      .slice(0,200)
-      .forEach(r=>{
-        const h = hesapla(r);
-        const isPay = r.tur==='Ödeme';
-        const div = document.createElement('div');
-        div.className='item';
-        div.innerHTML = isPay
-          ? `<div><strong>ÖDEME • ${r.odemeKategori||'-'}</strong> <span class="muted">(${r.tarih})</span>
-               <span class="badge" style="float:right">-${fmt(r.odemeTutar||0)}</span></div>
-             <div class="muted" style="margin-top:4px">${r.odemeYontemi||'-'} • ${r.aciklama||''}</div>`
-          : `<div><strong>${r.urunAdi||'-'}</strong> <span class="muted">(${r.sku||'-'})</span>
-               <span class="badge" style="float:right">${fmt(h.karEx)} kâr</span></div>
-             <div class="muted" style="margin-top:4px">${r.tarih} • ${r.tur} • ${r.kategori||'-'} • ${r.odemeYontemi||'-'}</div>`;
-        list.appendChild(div);
-      });
-}
-
-function exportCSV(){
-  const rows = load();
-  const headers = ["id","tarih","tur","urunAdi","sku","kategori","gelenAdet","satilanAdet","iadeAdet","alisFiyati","satisFiyati","iskontoPct","kdvPct","odemeYontemi","taraf","aciklama","odemeKategori","odemeTutar","netSatilan","gelirEx","maliyetEx","karEx","gelirInc","maliyetInc","karInc"];
-  const lines = rows.map(r=>{
-    const h = hesapla(r);
-    return [r.id,r.tarih,r.tur,r.urunAdi||"",r.sku||"",r.kategori||"",r.gelenAdet||0,r.satilanAdet||0,r.iadeAdet||0,r.alisFiyati||0,r.satisFiyati||0,r.iskontoPct||0,r.kdvPct||0,r.odemeYontemi||"",r.taraf||"",r.aciklama||"",r.odemeKategori||"",r.odemeTutar||0,h.net,h.gelirEx,h.maliyetEx,h.karEx,h.gelirInc,h.maliyetInc,h.karInc].join(";");
-  });
-  const csv = "\ufeff" + [headers.join(";"), ...lines].join("\n");
-  const blob = new Blob([csv], {type:"text/csv;charset=utf-8;"});
-  const url = URL.createObjectURL(blob);
-  const a = document.createElement('a'); a.href=url; a.download="byress_kayit_v4.csv"; a.click();
-  URL.revokeObjectURL(url);
-}
-
-// PIN always asked
-function showPIN(){ pinModal.style.display='flex'; pinInput.focus(); }
-function hidePIN(){ pinModal.style.display='none'; }
-function confirmPIN(){
-  const stored = localStorage.getItem(LS_PIN);
-  const val = pinInput.value.trim();
-  if(!stored){
-    if(val.length<4){ alert('En az 4 haneli PIN belirleyin'); return; }
-    localStorage.setItem(LS_PIN, btoa(val));
-    hidePIN(); return;
-  }else{
-    if(btoa(val)===stored){ hidePIN(); }
-    else{ alert('PIN hatalı'); }
-  }
-}
-function resetPIN(){
-  if(confirm('PIN sıfırlansın mı? (Sadece bu cihaz)')){
-    localStorage.removeItem(LS_PIN);
-    alert('PIN sıfırlandı. Yeni PIN belirleyin.');
-    showPIN();
-  }
-}
-
-document.getElementById('fDate').value = todayISO();
-document.getElementById('q').addEventListener('input', render);
-render();
-
-if ('serviceWorker' in navigator) {
-  window.addEventListener('load', () => navigator.serviceWorker.register('/service-worker.js'));
-}
-
-showPIN();
-</script>
+<script src="app.js"></script>
 </body>
 </html>
