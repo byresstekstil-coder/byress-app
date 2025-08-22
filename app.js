@@ -266,7 +266,7 @@ function renderReport(){
 // Settings
 function saveSettings(){ const s=getSettings(); s.webhook=$("#sWebhook").value.trim(); s.autoSync=$("#sAuto").value==="1"; s.low=+$("#sLow").value||3; setSettings(s); alert("Kaydedildi"); }
 function savePIN(){ const v=$("#sPin").value.trim(); if(v.length<4){ alert("PIN en az 4 hane"); return;} localStorage.setItem(LS_PIN,btoa(v)); alert("PIN güncellendi"); $("#sPin").value=""; }
-function resetPIN(){ localStorage.removeItem(LS_PIN); alert("PIN sıfırlandı. Açılışta yeni PIN belirle."); showPIN(); }
+function resetPIN(){ localStorage.removeItem(LS_PIN); alert("PIN sıfırlandı. Açılışta yeni PIN belirle."); try{ if(localStorage.getItem(LS_PIN)){ showPIN(); } }catch(e){ showPIN(); } }
 
 function backupJSON(){ const data={records:load(),settings:getSettings()}; const url=URL.createObjectURL(new Blob([JSON.stringify(data)],{type:"application/json"})); const a=document.createElement("a"); a.href=url; a.download="byress_backup.json"; a.click(); URL.revokeObjectURL(url); }
 function restoreJSON(){ const inp=document.createElement("input"); inp.type="file"; inp.accept="application/json"; inp.onchange=()=>{ const f=inp.files[0]; const fr=new FileReader(); fr.onload=()=>{ try{const data=JSON.parse(fr.result); if(data.records) save(data.records); if(data.settings) setSettings(data.settings); ensureDefaults(); renderAll(); alert("Yükleme tamam");}catch(e){alert("Geçersiz dosya");}}; fr.readAsText(f); }; inp.click(); }
@@ -277,7 +277,22 @@ document.querySelectorAll(".tab").forEach(btn=>btn.addEventListener("click",()=>
 // PIN
 function showPIN(){ $("#pinModal").style.display="flex"; $("#pinInput").focus(); }
 function hidePIN(){ $("#pinModal").style.display="none"; }
-function confirmPIN(){ const stored=localStorage.getItem(LS_PIN); const val=$("#pinInput").value.trim(); if(!stored){ if(val.length<4){ alert("En az 4 hane belirleyin"); return;} localStorage.setItem(LS_PIN,btoa(val)); hidePIN(); } else { if(btoa(val)===stored){ hidePIN(); } else { alert("PIN hatalı"); } } }
+
+function confirmPIN(){ 
+  const stored=localStorage.getItem(LS_PIN); 
+  const val=$("#pinInput").value.trim(); 
+  if(!stored){ 
+    // first run: if user leaves empty, set default 0000
+    const setTo = val.length>=4 ? val : "0000";
+    localStorage.setItem(LS_PIN,btoa(setTo)); 
+    alert("PIN ayarlandı: " + (val.length>=4? "••••" : "0000 (varsayılan)")); 
+    hidePIN(); 
+  } else { 
+    if(btoa(val)===stored){ hidePIN(); } else { alert("PIN hatalı"); } 
+  } 
+}
+// Enter key shortcut
+$("#pinInput").addEventListener("keydown",(e)=>{ if(e.key==="Enter"){ confirmPIN(); } });
 
 // Barcode
 async function startScan(){ try{ if(!window.BrowserMultiFormatReader){ alert("Tarayıcı hazır değil"); return; } const codeReader=new window.BrowserMultiFormatReader(); const preview=document.createElement("video"); preview.setAttribute("playsinline","true"); const box=document.createElement("div"); box.className="card"; box.innerHTML="<b>Barkod Tara</b>"; box.appendChild(preview); $("#home").insertBefore(box,$("#home").firstChild); codeReader.decodeFromVideoDevice(undefined, preview,(result,err)=>{ if(result){ $("#fSKU").value=result.getText(); codeReader.reset(); box.remove(); } }); }catch(e){ alert("Kamera izni verilmedi"); } }
@@ -297,6 +312,6 @@ renderChips();
 renderAll();
 
 if('serviceWorker' in navigator){ window.addEventListener('load', ()=>navigator.serviceWorker.register('/service-worker.js')); }
-showPIN();
+try{ if(localStorage.getItem(LS_PIN)){ showPIN(); } }catch(e){ showPIN(); }
 
 function renderAll(){ renderHomeSummary(); if($("#search").style.display!=="none") renderSearch(); if($("#stock").style.display!=="none") renderStock(); if($("#report").style.display!=="none") renderReport(); }
