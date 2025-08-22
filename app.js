@@ -94,7 +94,7 @@ $("#fPay").addEventListener("blur", ()=>autoAddToList("payList", $("#fPay").valu
 $("#fParty").addEventListener("blur", ()=>autoAddToList("partyList", $("#fParty").value));
 
 async function addRecord(){
-  const rec={
+  let rec={
     id: uid(), tarih: ($("#fDate").value||todayISO()).slice(0,10), tur: $("#fType").value,
     urunAdi: $("#fName").value, sku: $("#fSKU").value, kategori: $("#fCat").value,
     gelenAdet:+$("#fIn").value||0, satilanAdet:+$("#fOut").value||0, iadeAdet:+$("#fReturn").value||0,
@@ -102,6 +102,26 @@ async function addRecord(){
     odemeYontemi: $("#fPay").value, taraf: $("#fParty").value, aciklama: $("#fNote").value,
     odemeKategori: $("#fExpCat").value, odemeTutar: +$("#fExpAmt").value||0
   };
+
+  // --- Normalize quantities by type ---
+  if(rec.tur==="Alış"){
+    // If user filled Satılan instead of Gelen, map it
+    if((+rec.gelenAdet||0)===0 && (+rec.satilanAdet||0)>0){ rec.gelenAdet = +rec.satilanAdet; }
+    rec.satilanAdet = 0; // purchases shouldn't record sales here
+  } else if(rec.tur==="Satış"){
+    if((+rec.satilanAdet||0)===0 && (+rec.gelenAdet||0)>0){ rec.satilanAdet = +rec.gelenAdet; }
+    rec.gelenAdet = 0;
+  } else if(rec.tur==="İade"){
+    // Returns add back to stock; keep iadeAdet as entered
+    if((+rec.iadeAdet||0)===0){
+      // tolerate users who typed into gelen/satilan fields
+      rec.iadeAdet = (+rec.gelenAdet||0) || (+rec.satilanAdet||0);
+    }
+    rec.gelenAdet = 0; rec.satilanAdet = 0;
+  }
+  // Ensure numeric cleanup
+  rec.gelenAdet=+rec.gelenAdet||0; rec.satilanAdet=+rec.satilanAdet||0; rec.iadeAdet=+rec.iadeAdet||0;
+
   addRecordObj(rec);
   const s=getSettings(); if(s.autoSync && s.webhook){ try{ fetch(s.webhook,{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({...rec, hesap:hesapla(rec)})}); }catch(e){} }
   ["#fName","#fSKU","#fCat","#fParty","#fExpCat","#fNote"].forEach(sel=>$(sel).value="");
@@ -161,9 +181,43 @@ function renderSearch(){
       });
 }
 
+
 function renderStock(){
   const rows=load(); const q=($("#stockQ").value||"").toLowerCase().trim();
-  const map={};
+  const map={}; // key -> aggregate
+  rows.forEach(r=>{
+    const key = (r.sku && r.sku.trim()) ? r.sku.trim() : ((r.urunAdi&&r.urunAdi.trim())? r.urunAdi.trim() : null);
+    if(!key) return;
+    if(!map[key]) map[key]={name:r.urunAdi||"",sku:r.sku||"",in:0,sold:0,ret:0,buySum:0,buyQty:0,lastSell:0};
+    // Interpret by type for robustness
+    if(r.tur==="Alış"){
+      const g=+r.gelenAdet||(+r.satilanAdet||0);
+      if(g){ map[key].in += g; map[key].buySum += (+r.alisFiyati||0)*g; map[key].buyQty += g; }
+    } else if(r.tur==="Satış"){
+      const s=+r.satilanAdet||(+r.gelenAdet||0);
+      if(s){ map[key].sold += s; if(+r.satisFiyati) map[key].lastSell = +r.satisFiyati; }
+    } else if(r.tur==="İade"){
+      const rt=+r.iadeAdet||(+r.gelenAdet||+r.satilanAdet||0);
+      if(rt){ map[key].ret += rt; }
+    } else {
+      // Ödeme: stok yok
+    }
+  });
+  const tbody=$("#stockTable tbody"); tbody.innerHTML="";
+  let lowList=[]; const lowThreshold=+(getSettings().low||3);
+  Object.entries(map).forEach(([key,m])=>{
+    const stok = (m.in - m.sold + m.ret);
+    if(!q || (m.name||'').toLowerCase().includes(q) || (m.sku||'').toLowerCase().includes(q) || key.toLowerCase().includes(q)){
+      const tr=document.createElement('tr'); if(stok<=lowThreshold) tr.style.background="#fff7f7"; if(stok<0) tr.style.outline="2px solid #f00";
+      const avg = m.buyQty? (m.buySum/m.buyQty): 0;
+      tr.innerHTML=`<td>${m.name||'-'}</td><td>${m.sku||key}</td><td class="right">${stok}</td><td class="right">${fmt(avg)}</td><td class="right">${fmt(m.lastSell)}</td>`;
+      tbody.appendChild(tr);
+      if(stok<=lowThreshold) lowList.push(`${m.sku||key} (${stok})`);
+    }
+  });
+  $("#lowStockMsg").textContent = lowList.length? `Düşük stok: ${lowList.join(', ')}` : "";
+}
+;
   rows.forEach(r=>{
     if(!r.sku) return;
     if(!map[r.sku]) map[r.sku]={name:r.urunAdi||"",sku:r.sku,in:0,sold:0,ret:0,buySum:0,buyQty:0,lastSell:0};
