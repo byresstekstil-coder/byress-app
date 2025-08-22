@@ -26,3 +26,5 @@ button{padding:12px;border-radius:12px;border:1px solid var(--line);background:#
 .chart{height:200px;border:1px dashed var(--line);border-radius:12px;display:block;width:100%;background:#fff}
 .chips{display:flex;gap:6px;flex-wrap:wrap} .chip{padding:6px 10px;border:1px solid var(--line);border-radius:999px;background:#fff;font-size:12px}
 .kirmizi{background:#fff7f7}
+.pin{position:fixed;inset:0;background:rgba(0,0,0,.6);display:flex;align-items:center;justify-content:center;padding:16px}
+.pin .box{background:#fff;border-radius:16px;padding:18px;max-width:360px;width:100%;border:1px solid var(--line)}

@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
-<title>BYRESS Pro v2.2</title>
+<title>BYRESS Pro v2.3</title>
 <link rel="manifest" href="/manifest.json" />
 <meta name="theme-color" content="#0f3b2e" />
 <link rel="apple-touch-icon" href="/icon-192.png" />
@@ -14,18 +14,19 @@
 <header>
   <div class="wrap brand">
     <img src="/logo.png" class="logo-img" alt="BYRESS Logo"/>
-    <div><h1>BYRESS TEKSTİL</h1><div class="sub">Pro v2.2 • Kayıt • Stok • Rapor</div></div>
+    <div><h1>BYRESS TEKSTİL</h1><div class="sub">Pro v2.3 • Kayıt • Stok • Rapor • Veresiye</div></div>
   </div>
   <div class="wrap nav">
     <button class="tab active" data-tab="home">Ana</button>
     <button class="tab" data-tab="search">Arama</button>
     <button class="tab" data-tab="stock">Stok</button>
     <button class="tab" data-tab="report">Raporlar</button>
+    <button class="tab" data-tab="ledger">Veresiye</button>
     <button class="tab" data-tab="settings">Ayarlar</button>
   </div>
 </header>
 
-<main class="wrap" style="padding-bottom:140px">
+<main class="wrap" style="padding-bottom:160px">
   <!-- ANA -->
   <section id="home" class="tabpane">
     <div class="card">
@@ -50,7 +51,7 @@
           <datalist id="dlCat"></datalist>
         </div>
         <div><label>Ödeme Yöntemi</label>
-          <input id="fPay" list="dlPay" placeholder="Nakit / POS / ...">
+          <input id="fPay" list="dlPay" placeholder="Nakit / POS / Veresiye ...">
           <datalist id="dlPay"></datalist>
         </div>
       </div>
@@ -75,14 +76,14 @@
       </div>
       <div class="grid2">
         <div><label>Ödeme Kategorisi</label>
-          <input id="fExpCat" list="dlExpCat" placeholder="Kira / Elektrik / ...">
+          <input id="fExpCat" list="dlExpCat" placeholder="Kira / Tahsilat / ...">
           <datalist id="dlExpCat"></datalist>
         </div>
         <div><label>Ödeme Tutarı (TL)</label><input id="fExpAmt" type="number" step="0.01" value="0"></div>
       </div>
       <div class="row"><label>Açıklama</label><textarea id="fNote" rows="2" placeholder="Not..."></textarea></div>
 
-      <div class="small">Listeler otomatik dolar. Yazdığın yeni değerler kayda geçer ve Ayarlar → Hızlı Seçenekler'de görünür.</div>
+      <div class="small">Listeler otomatik dolar. Yazdığın yeni değerler Ayarlar > Hızlı Seçenekler'de görünür.</div>
 
       <div class="actions" style="margin-top:8px">
         <button class="primary" id="addBtn">Kaydı Ekle</button>
@@ -144,6 +145,36 @@
     </div>
   </section>
 
+  <!-- VERESİYE -->
+  <section id="ledger" class="tabpane" style="display:none">
+    <div class="card">
+      <div class="grid3">
+        <div><label>Müşteri</label><input id="ldParty" list="dlParty" placeholder="Müşteri adı"></div>
+        <div><label>Tahsilat Tutarı (TL)</label><input id="ldAmt" type="number" step="0.01" value="0"></div>
+        <div><label>Yöntem</label><input id="ldMethod" list="dlPay" placeholder="Nakit / POS / Transfer"></div>
+      </div>
+      <div class="actions" style="margin-top:8px">
+        <button class="primary" id="ldAdd">Tahsilat Ekle</button>
+        <button id="ldRefresh">Yenile</button>
+      </div>
+    </div>
+    <div class="card">
+      <div class="grid3">
+        <div><div class="small">Toplam Veresiye Satış</div><div id="ldSales" class="small">₺0</div></div>
+        <div><div class="small">Toplam Tahsilat</div><div id="ldPays" class="small">₺0</div></div>
+        <div><div class="small">Kalan Bakiye</div><div id="ldBalance" class="small">₺0</div></div>
+      </div>
+    </div>
+    <div class="card">
+      <div class="small">Hareketler</div>
+      <div class="list" id="ldList"></div>
+    </div>
+    <div class="card">
+      <div class="small">Tüm Müşteriler (Bakiye)</div>
+      <table class="table" id="ldAll"><thead><tr><th>Müşteri</th><th class="right">Bakiye</th></tr></thead><tbody></tbody></table>
+    </div>
+  </section>
+
   <!-- AYARLAR -->
   <section id="settings" class="tabpane" style="display:none">
     <div class="card">
@@ -153,6 +184,7 @@
       </div>
       <div class="grid2">
         <div><label>Düşük Stok Eşiği</label><input id="sLow" type="number" value="3"></div>
+        <div><label>PIN</label><div class="actions" style="gap:6px"><input id="sPin" type="password" placeholder="Yeni PIN (4+)"><button onclick="savePIN()">Kaydet</button><button onclick="resetPIN()">Sıfırla</button></div></div>
       </div>
     </div>
 
@@ -178,11 +210,24 @@
     <div class="card">
       <button onclick="backupJSON()">Yedekle (JSON)</button>
       <button onclick="restoreJSON()">Yedeği Yükle</button>
+      <button onclick="saveSettings()">Ayarları Kaydet</button>
     </div>
   </section>
 </main>
 
-<footer class="footer"><div class="footwrap">BYRESS • Cihazınızda saklanır • Pro v2.2</div></footer>
+<footer class="footer"><div class="footwrap">BYRESS • Cihazınızda saklanır • Pro v2.3</div></footer>
+
+<!-- PIN modal -->
+<div class="pin" id="pinModal">
+  <div class="box">
+    <div style="text-align:center"><img src="/logo.png" style="height:46px"><div class="small">Giriş Şifresi</div></div>
+    <input id="pinInput" type="password" inputmode="numeric" placeholder="****" style="width:100%;padding:12px;border:1px solid #e5e7eb;border-radius:12px;margin-top:8px">
+    <div class="actions" style="margin-top:8px">
+      <button class="primary" onclick="confirmPIN()">Giriş / Onay</button>
+      <button onclick="setDefaultPIN()">0000 ile Ayarla</button>
+    </div>
+  </div>
+</div>
 
 <script src="/app.js"></script>
 </body>
