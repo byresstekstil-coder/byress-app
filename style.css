@@ -23,7 +23,6 @@ button{padding:12px;border-radius:12px;border:1px solid var(--line);background:#
 .table{width:100%;border-collapse:collapse} .table th,.table td{border-bottom:1px solid var(--line);padding:8px;text-align:left} .right{text-align:right}
 .footer{position:fixed;left:0;right:0;bottom:0;background:#fff;border-top:1px solid var(--line)}
 .footwrap{max-width:860px;margin:0 auto;padding:8px 16px;font-size:12px;color:var(--muted);text-align:center}
-.pin{position:fixed;inset:0;background:rgba(0,0,0,.6);display:flex;align-items:center;justify-content:center;padding:16px}
-.pin .box{background:#fff;border-radius:16px;padding:18px;max-width:360px;width:100%;border:1px solid var(--line)}
 .chart{height:200px;border:1px dashed var(--line);border-radius:12px;display:block;width:100%;background:#fff}
 .chips{display:flex;gap:6px;flex-wrap:wrap} .chip{padding:6px 10px;border:1px solid var(--line);border-radius:999px;background:#fff;font-size:12px}
+.kirmizi{background:#fff7f7}
