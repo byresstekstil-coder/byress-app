@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
-<title>BYRESS Pro v2.3</title>
+<title>BYRESS Pro v2.3.2</title>
 <link rel="manifest" href="/manifest.json" />
 <meta name="theme-color" content="#0f3b2e" />
 <link rel="apple-touch-icon" href="/icon-192.png" />
@@ -14,7 +14,7 @@
 <header>
   <div class="wrap brand">
     <img src="/logo.png" class="logo-img" alt="BYRESS Logo"/>
-    <div><h1>BYRESS TEKSTİL</h1><div class="sub">Pro v2.3 • Kayıt • Stok • Rapor • Veresiye</div></div>
+    <div><h1>BYRESS TEKSTİL</h1><div class="sub">Pro v2.3.2 • Kayıt • Stok • Rapor • Veresiye</div></div>
   </div>
   <div class="wrap nav">
     <button class="tab active" data-tab="home">Ana</button>
@@ -212,10 +212,19 @@
       <button onclick="restoreJSON()">Yedeği Yükle</button>
       <button onclick="saveSettings()">Ayarları Kaydet</button>
     </div>
+
+    <div class="card">
+      <b>Temizlik / Sıfırlama</b>
+      <div class="small" style="margin:6px 0">Bu işlemler geri alınamaz. Lütfen dikkat.</div>
+      <div class="actions">
+        <button onclick="resetAllRecords()">Kayıtları Sıfırla</button>
+        <button style="background:#fee2e2;border-color:#fecaca" onclick="resetEverything()">Her Şeyi Sıfırla (Kayıt+Ayar+PIN)</button>
+      </div>
+    </div>
   </section>
 </main>
 
-<footer class="footer"><div class="footwrap">BYRESS • Cihazınızda saklanır • Pro v2.3</div></footer>
+<footer class="footer"><div class="footwrap">BYRESS • Cihazınızda saklanır • Pro v2.3.2</div></footer>
 
 <!-- PIN modal -->
 <div class="pin" id="pinModal">

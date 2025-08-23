@@ -1,7 +1,7 @@
 
-const LS_KEY="byress_records_v2_3";
-const LS_SETTINGS="byress_settings_v2_3";
-const LS_PIN="byress_pin_v2_3";
+const LS_KEY="byress_records_v2_3_2";
+const LS_SETTINGS="byress_settings_v2_3_2";
+const LS_PIN="byress_pin_v2_3_2";
 const $=sel=>document.querySelector(sel);
 const fmt=n=>(n||0).toLocaleString('tr-TR',{style:'currency',currency:'TRY',maximumFractionDigits:2});
 const todayISO=()=>new Date().toISOString().slice(0,10);
@@ -140,7 +140,6 @@ function summarize(range){
     if(range==='week' && !(t>=ws && t<=today)) return;
     if(range==='month' && monthKey(t)!==mk) return;
     if(r.tur==="Ödeme"){ 
-      // Ödeme kategorisi "Tahsilat" ise işletme geliri (veresiye tahsil); diğerleri gider
       if((r.odemeKategori||"").toLowerCase()==="tahsilat"){ }
       else { gider+= (+r.odemeTutar||0); }
     } else { const h=hesapla(r); gelir+=h.gelirEx; gider+=h.maliyetEx; }
@@ -313,12 +312,14 @@ function renderReport(){
   const prodT=$("#topProd tbody"); prodT.innerHTML=""; topProd.forEach(([k,v])=>{ const tr=document.createElement('tr'); tr.innerHTML=`<td>${k}</td><td class="right">${fmt(v)}</td>`; prodT.appendChild(tr); });
 }
 
-// Settings
+// Settings + reset
 function saveSettings(){ const s=getSettings(); s.webhook=$("#sWebhook").value.trim(); s.autoSync=$("#sAuto").value==="1"; s.low=+$("#sLow").value||3; setSettings(s); alert("Kaydedildi"); }
 function savePIN(){ const v=$("#sPin").value.trim(); if(v.length<4){ alert("PIN en az 4 hane"); return;} localStorage.setItem(LS_PIN,btoa(v)); alert("PIN güncellendi"); $("#sPin").value=""; }
 function resetPIN(){ localStorage.removeItem(LS_PIN); alert("PIN sıfırlandı. Açılışta yeni PIN belirle."); showPIN(); setTimeout(()=>$('#pinInput').focus(),10); }
 function backupJSON(){ const data={records:load(),settings:getSettings()}; const url=URL.createObjectURL(new Blob([JSON.stringify(data)],{type:"application/json"})); const a=document.createElement("a"); a.href=url; a.download="byress_backup.json"; a.click(); URL.revokeObjectURL(url); }
 function restoreJSON(){ const inp=document.createElement("input"); inp.type="file"; inp.accept="application/json"; inp.onchange=()=>{ const f=inp.files[0]; const fr=new FileReader(); fr.onload=()=>{ try{const data=JSON.parse(fr.result); if(data.records) save(data.records); if(data.settings) setSettings(data.settings); ensureDefaults(); renderAll(); alert("Yükleme tamam");}catch(e){alert("Geçersiz dosya");}}; fr.readAsText(f); }; inp.click(); }
+function resetAllRecords(){ if(confirm("Tüm KAYITLAR (satış/alış/iade/ödeme) silinecek. Emin misiniz?")){ localStorage.removeItem(LS_KEY); alert("Kayıtlar sıfırlandı."); renderAll(); } }
+function resetEverything(){ if(confirm("TÜM VERİLER (kayıtlar + ayarlar + PIN) silinecek ve uygulama başa dönecek. Emin misiniz?")){ try{ localStorage.removeItem(LS_KEY); localStorage.removeItem(LS_SETTINGS); localStorage.removeItem(LS_PIN);}catch(e){} alert("Her şey silindi. Sayfa yeniden açılacak."); location.reload(); } }
 
 // Tabs
 document.querySelectorAll(".tab").forEach(btn=>btn.addEventListener("click",()=>{ document.querySelectorAll(".tab").forEach(b=>b.classList.remove("active")); btn.classList.add("active"); const v=btn.getAttribute("data-tab"); document.querySelectorAll(".tabpane").forEach(p=>p.style.display="none"); $("#"+v).style.display="block"; if(v==="stock") renderStock(); if(v==="report") renderReport(); if(v==="search") renderSearch(); if(v==="home") renderHomeSummary(); if(v==="ledger") renderLedger(); }));
